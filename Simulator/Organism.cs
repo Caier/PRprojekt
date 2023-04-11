@@ -18,6 +18,7 @@ namespace CellSimulator.Simulator {
             organismDrawer = new(this);
             cells.TryAdd(new Bacteria(new(400, 100), 3.234f), null);
             cells.TryAdd(new Leukocyte(new(150, 200), 2.221f), null);
+            cells.TryAdd(new Antibody(new(250, 150), 2.742f), null);
             new Thread(organismDrawer.Run).Start();
             OrganismLife();
         }
