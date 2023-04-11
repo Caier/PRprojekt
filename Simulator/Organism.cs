@@ -27,9 +27,9 @@ namespace CellSimulator.Simulator {
 
             foreach(var cell in cells.Keys) {
                 if (cell.Position.X > organismDrawer.viewPort.Width || cell.Position.X < 0)
-                    cell.Angle = (float)Math.PI - cell.Angle;
-                if (cell.Position.Y > organismDrawer.viewPort.Height || cell.Position.Y < 0)
                     cell.Angle = -cell.Angle;
+                if (cell.Position.Y > organismDrawer.viewPort.Height || cell.Position.Y < 0)
+                    cell.Angle = (float)Math.PI - cell.Angle;
                 cell.Position += new Vector2((float)Math.Sin(cell.Angle) * cell.Speed * delta, (float)-Math.Cos(cell.Angle) * cell.Speed * delta);
             }
         }
