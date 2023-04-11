@@ -1,0 +1,1 @@
+﻿var _ = new CellSimulator.Simulator.Organism();
