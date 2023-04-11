@@ -17,6 +17,7 @@ namespace CellSimulator.Simulator {
         public Organism() {
             organismDrawer = new(this);
             cells.TryAdd(new Bacteria(new(400, 100), 3.234f), null);
+            cells.TryAdd(new Leukocyte(new(150, 200), 2.221f), null);
             new Thread(organismDrawer.Run).Start();
             OrganismLife();
         }
@@ -39,7 +40,7 @@ namespace CellSimulator.Simulator {
                 var r = Random.Shared.NextDouble();
 
                 if (r < 0.1) {
-                    var c = cells.ElementAt(Random.Shared.Next(0, cells.Count - 1)).Key;
+                    var c = cells.ElementAt(Random.Shared.Next(0, cells.Count)).Key;
                     cells.TryAdd(c.Divide(), null);
                 }
 
