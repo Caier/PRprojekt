@@ -19,6 +19,7 @@ namespace CellSimulator.Simulator {
             cells.TryAdd(new Bacteria(new(400, 100), 3.234f), null);
             cells.TryAdd(new Leukocyte(new(150, 200), 2.221f), null);
             cells.TryAdd(new Antibody(new(250, 150), 2.742f), null);
+            cells.TryAdd(new Macrophage(new(500, 234), 2.34f), null);
             new Thread(organismDrawer.Run).Start();
             OrganismLife();
         }
@@ -40,9 +41,11 @@ namespace CellSimulator.Simulator {
             while(true) {
                 var r = Random.Shared.NextDouble();
 
-                if (r < 0.1) {
-                    var c = cells.ElementAt(Random.Shared.Next(0, cells.Count)).Key;
-                    cells.TryAdd(c.Divide(), null);
+                var types = cells.Keys.Select(c => c.Name).ToHashSet();
+                var type = types.ElementAt(Random.Shared.Next(0, types.Count));
+
+                if (r < 0.3) {
+                    cells.TryAdd(cells.Keys.Where(c => c.Name == type).First().Divide(), null);
                 }
 
                 await Task.Delay(500);
