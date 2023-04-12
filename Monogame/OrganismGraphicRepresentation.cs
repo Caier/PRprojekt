@@ -14,20 +14,23 @@ namespace CellSimulator.Monogame {
 
         private Organism organism;
         private Dictionary<string, Texture2D> cellTextures = new();
-        internal Rectangle viewPort; //kiedyś może do przesuwanej kamery czy coś
+        internal Rectangle viewPort => new(0, 0, 
+            (int)(_graphics.GraphicsDevice.DisplayMode.Width * 0.7),
+            (int)(_graphics.GraphicsDevice.DisplayMode.Height * 0.7)); //kiedyś może do przesuwanej kamery czy coś
 
         public OrganismGraphicRepresentation(Organism organism) {
             this.organism = organism;
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
-            viewPort = this.Window.ClientBounds;
         }
 
         protected override void Initialize() {
             _graphics.PreferMultiSampling = true;
             _graphics.GraphicsProfile = GraphicsProfile.HiDef;
             _graphics.GraphicsDevice.PresentationParameters.MultiSampleCount = 4;
+            _graphics.PreferredBackBufferWidth = viewPort.Width;
+            _graphics.PreferredBackBufferHeight = viewPort.Height;
             _graphics.ApplyChanges();
 
             base.Initialize();

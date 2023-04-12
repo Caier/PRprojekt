@@ -17,7 +17,7 @@ namespace CellSimulator.Simulator
         public Leukocyte(Vector2 p, float angle) : base(p, angle)
         {
             Speed = Random.Shared.NextSingle() * (35.0f - 14f) + 14f;
-            Size = Random.Shared.Next(54, 72);
+            Size = Random.Shared.Next(83, 140);
         }
 
 

@@ -15,7 +15,7 @@ namespace CellSimulator.Simulator
         public override float Speed { get; set; }
         public Antibody(Vector2 p, float angle) : base(p, angle)
         {
-            Speed = Random.Shared.NextSingle() * (35.0f - 14f) + 14f;
+            Speed = Random.Shared.NextSingle() * (75.0f - 60f) + 60f;
             Size = Random.Shared.Next(54, 72);
         }
     }
