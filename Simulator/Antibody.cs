@@ -44,7 +44,14 @@ namespace CellSimulator.Simulator {
                 }
             }
 
-            base.Life(delta);
+            if (!isAttached) {
+                if (Position.X > parent.organismDrawer.viewPort.Width || Position.X < 0)
+                    Angle = -Angle;
+                if (Position.Y > parent.organismDrawer.viewPort.Height || Position.Y < 0)
+                    Angle = (float)Math.PI - Angle;
+            }
+
+            Position += new Vector2((float)Math.Sin(Angle) * Speed * delta, (float)-Math.Cos(Angle) * Speed * delta);
         }
     }
 }
