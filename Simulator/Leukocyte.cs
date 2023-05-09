@@ -16,10 +16,41 @@ namespace CellSimulator.Simulator {
 
         public int TimeUntilNextRelease { get; set; } = 0;
 
-        public Leukocyte(Vector2 p, float angle) : base(p, angle) {
+        public Leukocyte(Organism parent, Vector2 p, float angle) : base(parent, p, angle) {
             Speed = Random.Shared.NextSingle() * (35.0f - 14f) + 14f;
             Size = Random.Shared.Next(54, 83);
             
+        }
+
+        protected override void Life(float delta) {
+            Leukocyte leukocyte = this;
+
+            if (leukocyte.TimeUntilNextRelease-- <= 0) {
+
+                var closestDistance = double.PositiveInfinity;
+                Bacteria targetBacteria = null;
+                foreach (var c in parent.cells.Keys) {
+                    if (c.Name == "Bakteria") {
+                        double distance = (float)Math.Sqrt(Math.Pow(c.Position.X - leukocyte.Position.X, 2.00) + Math.Pow(c.Position.Y - leukocyte.Position.Y, 2.00));
+                        if ((distance < leukocyte.Range) && (distance < closestDistance)) //encountered bacteria; targets closest one within range
+                        {
+                            closestDistance = distance;
+                            targetBacteria = (Bacteria)c;
+                        }
+                    }
+                }
+
+                if (targetBacteria != null) //releasing antibodies
+                {
+                    List<Antibody> antibodies = leukocyte.ReleaseAntibodies(targetBacteria);
+                    foreach (Antibody a in antibodies) {
+                        cells.TryAdd(a, null);
+                    }
+                }
+
+            }
+
+            base.Life(delta);
         }
 
         public List<Antibody> ReleaseAntibodies(Bacteria target)

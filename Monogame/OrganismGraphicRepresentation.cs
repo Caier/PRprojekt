@@ -36,6 +36,11 @@ namespace CellSimulator.Monogame {
             base.Initialize();
         }
 
+        protected override void EndRun() {
+            organism.shutdown.Cancel();
+            base.EndRun();
+        }
+
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
