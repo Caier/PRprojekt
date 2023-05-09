@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Threading;
+using System.Diagnostics;
 
 namespace CellSimulator.Simulator {
     public abstract class Cell : IEqualityComparer<Cell> {
@@ -13,13 +14,15 @@ namespace CellSimulator.Simulator {
         public abstract string SVGSprite { get; }
         public abstract int Size { get; set; }
         public abstract float Speed { get; set; }
+        public abstract float DivideRate { get; set; }
 
         public Vector2 Position { get; set; } = new(0, 0);
         public Guid Id { get; } = Guid.NewGuid();
         public float Angle { get; set; } = 0;
 
-        private readonly Organism parent;
-        private readonly int cellFrameTimeMillis = 1000 / 60;
+        protected readonly Organism parent;
+        protected readonly int cellFrameTimeMillis = 1000 / 60;
+        private float divisionCounter = 0;
 
         public Cell(Organism parent) {
             this.parent = parent;
@@ -47,6 +50,16 @@ namespace CellSimulator.Simulator {
             if (Position.Y > parent.organismDrawer.viewPort.Height || Position.Y < 0)
                 Angle = (float)Math.PI - Angle;
             Position += new Vector2((float)Math.Sin(Angle) * Speed * delta, (float)-Math.Cos(Angle) * Speed * delta);
+
+            if((divisionCounter += delta) > DivideRate && parent.cells.Count < parent.maxCells) {
+                divisionCounter = 0;
+                if (Random.Shared.NextDouble() < 0.3) {
+                    var divC = Divide();
+                    if (divC is not null)
+                        parent.cells.TryAdd(divC, null);
+                    DivideRate += 0.2f * DivideRate;
+                }
+            }
         }
 
         public bool Equals(Cell x, Cell y) {
