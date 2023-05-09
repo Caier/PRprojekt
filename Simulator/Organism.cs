@@ -12,29 +12,24 @@ using Microsoft.Xna.Framework;
 namespace CellSimulator.Simulator {
     public class Organism {
         internal ConcurrentDictionary<Cell, byte?> cells = new();
-        OrganismGraphicRepresentation organismDrawer;
+        internal float lastDelta = 0;
+        internal OrganismGraphicRepresentation organismDrawer;
+        internal CancellationTokenSource shutdown = new();
 
         public Organism() {
             organismDrawer = new(this);
-            cells.TryAdd(new Bacteria(new(400, 100), 3.234f), null);
-            cells.TryAdd(new Leukocyte(new(150, 200), 2.221f), null);
-            cells.TryAdd(new Antibody(new(250, 150), 2.742f), null);
-            cells.TryAdd(new Macrophage(new(500, 234), 2.34f), null);
             new Thread(organismDrawer.Run).Start();
+            Thread.Sleep(3000);
+
+            cells.TryAdd(new Bacteria(this, new(400, 100), 3.234f), null);
+            cells.TryAdd(new Leukocyte(this,new(150, 200), 2.221f), null);
+            cells.TryAdd(new Antibody(this, new(250, 150), 2.742f), null);
+            cells.TryAdd(new Macrophage(this, new(500, 234), 2.34f), null);
             OrganismLife();
         }
 
-        //wołane z OrganismGraphicRepresentation, przeznaczone do aktualizowania stanu niezwiązanego z wyglądem - pozycja itp.
         internal void Update(GameTime time) {
-            float delta = (float)time.ElapsedGameTime.TotalSeconds;
-
-            foreach(var cell in cells.Keys) {
-                if (cell.Position.X > organismDrawer.viewPort.Width || cell.Position.X < 0)
-                    cell.Angle = -cell.Angle;
-                if (cell.Position.Y > organismDrawer.viewPort.Height || cell.Position.Y < 0)
-                    cell.Angle = (float)Math.PI - cell.Angle;
-                cell.Position += new Vector2((float)Math.Sin(cell.Angle) * cell.Speed * delta, (float)-Math.Cos(cell.Angle) * cell.Speed * delta);
-            }
+            lastDelta = (float)time.ElapsedGameTime.TotalSeconds;
         }
 
         private async void OrganismLife() {

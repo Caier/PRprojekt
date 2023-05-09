@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace CellSimulator.Simulator {
     public abstract class Cell : IEqualityComparer<Cell> {
@@ -17,16 +18,35 @@ namespace CellSimulator.Simulator {
         public Guid Id { get; } = Guid.NewGuid();
         public float Angle { get; set; } = 0;
 
-        public Cell() { }
+        private readonly Organism parent;
+        private readonly int cellFrameTimeMillis = 1000 / 60;
 
-        public Cell(Vector2 pos, float angle) {
+        public Cell(Organism parent) {
+            this.parent = parent;
+            new Thread(() => {
+                while (!parent.shutdown.IsCancellationRequested) {
+                    Life(cellFrameTimeMillis / 1000f);
+                    Thread.Sleep(cellFrameTimeMillis);
+                }
+            }).Start();
+        }
+
+        public Cell(Organism parent, Vector2 pos, float angle) : this(parent) {
             Position = pos;
             Angle = angle;
         }
 
         public Cell Divide() {
-            Cell c = (Cell)Activator.CreateInstance(this.GetType(), new object[] { new Vector2(Position.X, Position.Y), Random.Shared.NextSingle() * 2 * (float)Math.PI });
+            Cell c = (Cell)Activator.CreateInstance(this.GetType(), new object[] { parent, new Vector2(Position.X, Position.Y), Random.Shared.NextSingle() * 2 * (float)Math.PI });
             return c;
+        }
+
+        protected virtual void Life(float delta) {
+            if (Position.X > parent.organismDrawer.viewPort.Width || Position.X < 0)
+                Angle = -Angle;
+            if (Position.Y > parent.organismDrawer.viewPort.Height || Position.Y < 0)
+                Angle = (float)Math.PI - Angle;
+            Position += new Vector2((float)Math.Sin(Angle) * Speed * delta, (float)-Math.Cos(Angle) * Speed * delta);
         }
 
         public bool Equals(Cell x, Cell y) {

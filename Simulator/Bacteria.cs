@@ -13,7 +13,7 @@ namespace CellSimulator.Simulator {
         public override int Size { get; set; }
         public override float Speed { get; set; }
 
-        public Bacteria(Vector2 p, float angle) : base(p, angle) {
+        public Bacteria(Organism parent, Vector2 p, float angle) : base(parent, p, angle) {
             Speed = Random.Shared.NextSingle() * (35.0f - 14f) + 14f;
             Size = Random.Shared.Next(54, 72);
         }
