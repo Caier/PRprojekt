@@ -22,9 +22,12 @@ namespace CellSimulator.Simulator {
             new Thread(organismDrawer.Run).Start();
             Thread.Sleep(2000);
 
-            cells.TryAdd(new Bacteria(this, new(400, 100), 3.234f), null);
-            cells.TryAdd(new Leukocyte(this,new(150, 200), 2.221f), null);
-            cells.TryAdd(new Macrophage(this, new(500, 234), 2.34f), null);
+            for (int i = 0; i < 2; i++) {
+                var s = organismDrawer.viewPort;
+                cells.TryAdd(new Bacteria(this, new((float)Random.Shared.Next(0, s.Width), (float)Random.Shared.Next(0, s.Height)), (float)(Random.Shared.NextSingle() * 2 * Math.PI)), null);
+                cells.TryAdd(new Macrophage(this, new((float)Random.Shared.Next(0, s.Width), (float)Random.Shared.Next(0, s.Height)), (float)(Random.Shared.NextSingle() * 2 * Math.PI)), null);
+                cells.TryAdd(new Leukocyte(this, new((float)Random.Shared.Next(0, s.Width), (float)Random.Shared.Next(0, s.Height)), (float)(Random.Shared.NextSingle() * 2 * Math.PI)), null);
+            }
         }
 
         internal void Update(GameTime time) {
