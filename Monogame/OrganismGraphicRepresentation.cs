@@ -44,7 +44,7 @@ namespace CellSimulator.Monogame {
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            organism.StartLife();
         }
 
         protected override void Update(GameTime gameTime) {

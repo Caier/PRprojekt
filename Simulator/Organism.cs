@@ -20,8 +20,9 @@ namespace CellSimulator.Simulator {
         public Organism() {
             organismDrawer = new(this);
             new Thread(organismDrawer.Run).Start();
-            Thread.Sleep(2000);
+        }
 
+        internal void StartLife() {
             for (int i = 0; i < 2; i++) {
                 var s = organismDrawer.viewPort;
                 cells.TryAdd(new Bacteria(this, new((float)Random.Shared.Next(0, s.Width), (float)Random.Shared.Next(0, s.Height)), (float)(Random.Shared.NextSingle() * 2 * Math.PI)), null);
