@@ -17,6 +17,7 @@ namespace CellSimulator.Simulator {
 
         public bool isAttached { get; set; } = false;
         public Bacteria Target { get; set; } = null;
+        private Vector2 attachedPosition;
 
         public Antibody(Organism parent, Vector2 p, float angle, Bacteria target) : base(parent, p, angle) {
             Speed = Random.Shared.NextSingle() * (75.0f - 60f) + 60f;
@@ -25,9 +26,9 @@ namespace CellSimulator.Simulator {
         }
 
         protected override void Life(float delta) {
-            if (isAttached) //moves with bacteria
-            {
+            if (isAttached) {//moves with bacteria
                 Angle = Target.Angle;
+                Position = Target.Position - attachedPosition;
             }
             else //pursuing target
             {
@@ -40,7 +41,9 @@ namespace CellSimulator.Simulator {
                 if (distance < target.Size / 5) //check if target found
                 {
                     isAttached = true;
+                    target.isAttacked = true;
                     Speed = target.Speed;
+                    attachedPosition = difference;
                 }
             }
 
@@ -49,9 +52,8 @@ namespace CellSimulator.Simulator {
                     Angle = -Angle;
                 if (Position.Y > parent.organismDrawer.viewPort.Height || Position.Y < 0)
                     Angle = (float)Math.PI - Angle;
+                Position += new Vector2((float)Math.Sin(Angle) * Speed * delta, (float)-Math.Cos(Angle) * Speed * delta);
             }
-
-            Position += new Vector2((float)Math.Sin(Angle) * Speed * delta, (float)-Math.Cos(Angle) * Speed * delta);
         }
     }
 }

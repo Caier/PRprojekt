@@ -36,7 +36,6 @@ namespace CellSimulator.Simulator {
                         {
                             closestDistance = distance;
                             targetBacteria = (Bacteria)c;
-                            targetBacteria.isAttacked = true;
                         }
                     }
                 }
