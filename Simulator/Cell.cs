@@ -17,7 +17,7 @@ namespace CellSimulator.Simulator {
         public abstract float DivideRate { get; set; }
 
         public Vector2 Position { get; set; } = new(0, 0);
-        public Guid Id { get; } = Guid.NewGuid();
+        public Guid Id { get; set; } = Guid.NewGuid();
         public float Angle { get; set; } = 0;
 
         protected readonly Organism parent;

@@ -8,31 +8,59 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CellSimulator.Monogame;
+using Grpc.Core;
 using Microsoft.Xna.Framework;
+using static OrganismService;
 
 namespace CellSimulator.Simulator {
-    public class Organism {
+    public class Organism : OrganismServiceBase
+    {
         internal ConcurrentDictionary<Cell, byte?> cells = new();
         internal OrganismGraphicRepresentation organismDrawer;
         internal CancellationTokenSource shutdown = new();
         internal readonly int maxCells = 150;
+        internal CellFactory cellFactory;
 
         public Organism() {
             organismDrawer = new(this);
+            cellFactory = new CellFactory();
             new Thread(organismDrawer.Run).Start();
+            
         }
 
         internal void StartLife() {
-            for (int i = 0; i < 2; i++) {
-                var s = organismDrawer.viewPort;
-                cells.TryAdd(new Bacteria(this, new((float)Random.Shared.Next(0, s.Width), (float)Random.Shared.Next(0, s.Height)), (float)(Random.Shared.NextSingle() * 2 * Math.PI)), null);
-                cells.TryAdd(new Macrophage(this, new((float)Random.Shared.Next(0, s.Width), (float)Random.Shared.Next(0, s.Height)), (float)(Random.Shared.NextSingle() * 2 * Math.PI)), null);
-                cells.TryAdd(new Leukocyte(this, new((float)Random.Shared.Next(0, s.Width), (float)Random.Shared.Next(0, s.Height)), (float)(Random.Shared.NextSingle() * 2 * Math.PI)), null);
-            }
+            
+
         }
 
         internal void Update(GameTime time) {
             
+        }
+
+
+        public override Task<ActionResult> createCell(CellInfo request, ServerCallContext context)
+        {
+            Cell cell = cellFactory.createCellFromCellInfo(this, request);
+            if (cell == null)
+            {
+                cells.TryAdd(cell, null);
+
+            }
+            ActionResult actionResult = new ActionResult();
+            actionResult.Result = 0; // SUCCESS (one option for success, many options for failure)
+            return Task.FromResult(actionResult);
+        }
+
+        public override Task<ActionResult> killCell(UUID request, ServerCallContext context)
+        {
+            // TODO
+            return base.killCell(request, context);
+        }
+
+        public override Task<LocationResponse> findCellsNearby(LocationRequest request, ServerCallContext context)
+        {
+            // TODO
+            return base.findCellsNearby(request, context);
         }
     }
 }
