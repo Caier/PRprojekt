@@ -7,13 +7,14 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CellLibrary.Simulator;
 using CellSimulator.Monogame;
 using Grpc.Core;
 using Microsoft.Xna.Framework;
 using static OrganismService;
 
-namespace CellSimulator.Simulator {
-    public class Organism : OrganismServiceBase
+namespace CellSimulator.Simulator  {
+    public class Organism : OrganismServiceBase, IOrganism
     {
         internal ConcurrentDictionary<Cell, byte?> cells = new();
         internal OrganismGraphicRepresentation organismDrawer;

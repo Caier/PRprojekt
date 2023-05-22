@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using Svg;
 using System.IO;
+using CellLibrary.Simulator;
 
 namespace CellSimulator.Monogame {
     public class OrganismGraphicRepresentation : Game {
