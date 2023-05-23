@@ -63,5 +63,25 @@ namespace CellSimulator.Simulator  {
             // TODO
             return base.findCellsNearby(request, context);
         }
+
+        public void createCell(Cell cell)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void moveCell(Cell cell, float x, float y)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void changeCellAttribute(Cell cell, CellAttribute cellAttribute, float value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void killCell(Cell cell)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
