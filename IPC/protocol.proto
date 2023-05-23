@@ -5,6 +5,8 @@ service OrganismService {
 	rpc createCell(CellInfo) returns (ActionResult){}
 	rpc killCell(UUID) returns (ActionResult){}
 	rpc findCellsNearby(LocationRequest) returns (LocationResponse){}
+	rpc moveCell(MoveRequest) returns (ActionResult){}
+	rpc changeAttribute(ChangeAttributeRequest) returns (ActionResult){}
 
 }
 
@@ -18,6 +20,17 @@ message LocationRequest {
 	float distance = 3;
 }
 
+message MoveRequest {
+	UUID cell = 1;
+	float x = 2;
+	float y = 3;
+}
+
+message ChangeAttributeRequest {
+	UUID cell = 1;
+	int32 attribute = 2;
+	float value = 3;
+}
 
 
 message CellInfo {

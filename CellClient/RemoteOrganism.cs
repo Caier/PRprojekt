@@ -31,13 +31,36 @@ namespace CellClient
 
         public void changeCellAttribute(Cell cell, CellAttribute cellAttribute, float value)
         {
-            throw new NotImplementedException();
+            ChangeAttributeRequest changeAttributeRequest = new ChangeAttributeRequest
+            {
+                Cell = new UUID
+                {
+                    Value = cell.Id.ToString()
+                },
+                Attribute = (int)cellAttribute,
+                Value = value
+            };
+            organismServiceClient.changeAttribute(changeAttributeRequest);
         }
 
         public void createCell(Cell cell)
         {
             CellInfo cellInfo = cellSerializator.serializeFullCell(cell);
             organismServiceClient.createCell(cellInfo);
+        }
+
+        public IEnumerable<Cell> getCellsNearby(float x, float y, float distance)
+        {
+            LocationRequest locationRequest = new LocationRequest
+            {
+                X = x,
+                Y = y,
+                Distance = distance
+            };
+            LocationResponse locationResponse = organismServiceClient.findCellsNearby(locationRequest);
+            IEnumerable<CellInfo> cells = locationResponse.Cells;
+
+            return null;// TODO Transform this IEnumerable into other
         }
 
         public void killCell(Cell cell)
@@ -49,7 +72,16 @@ namespace CellClient
 
         public void moveCell(Cell cell, float x, float y)
         {
-            throw new NotImplementedException();
+            MoveRequest moveRequest = new MoveRequest
+            {
+                Cell = new UUID
+                {
+                    Value = cell.Id.ToString()
+                },
+                X = x,
+                Y = y
+            };
+            organismServiceClient.moveCell(moveRequest);
         }
          
     }

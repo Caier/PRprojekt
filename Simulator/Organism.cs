@@ -83,5 +83,10 @@ namespace CellSimulator.Simulator  {
         {
             throw new NotImplementedException();
         }
+
+        public IEnumerable<Cell> getCellsNearby(float x, float y, float distance)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

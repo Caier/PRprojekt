@@ -16,5 +16,7 @@ namespace CellLibrary.Simulator
         void moveCell(Cell cell, float x, float y);
         void changeCellAttribute(Cell cell, CellAttribute cellAttribute, float value);
         void killCell(Cell cell);
+
+        IEnumerable<Cell> getCellsNearby(float x, float y, float distance);
     }
 }
