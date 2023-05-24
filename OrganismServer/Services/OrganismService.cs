@@ -28,12 +28,33 @@ namespace OrganismServer.Services {
         }
 
         public override Task<ActionResult> killCell(UUID request, ServerCallContext context) {
-            // TODO
-            return base.killCell(request, context);
+            var guid = new Guid(request.Value.Memory.ToArray());
+            var c = logic.cells.Keys.Where(c => c.Id == guid).First();
+            if(c is not null) {
+                c.Dead = true;
+                return Task.FromResult(new ActionResult { Result = 0 });
+            }
+            return Task.FromResult(new ActionResult { Result = -1 });
         }
 
         public override Task<LocationResponse> findCellsNearby(LocationRequest request, ServerCallContext context) {
-            // TODO
+            /*var cells = new List<CellInfo>();
+            var from = logic.cells.Keys.Where(c => c.Id == new Guid(request.From.Value.Memory.ToArray())).First();
+            if (from is null) {
+                return Task.FromResult(new LocationResponse { Result = new ActionResult { Result = -1 } });
+            }
+            foreach (var cell in logic.cells.Keys) {
+                if (Math.Sqrt(Math.Pow(from.Position.X - cell.Position.X, 2) 
+                    + Math.Pow(from.Position.Y - cell.Position.Y, 2)) <= request.Distance) {
+                    cells.Add(cell.ToCellInfo());
+                }
+            }
+
+            var response = new LocationResponse {
+                Result = new ActionResult { Result = 0 },
+                Self = from.ToCellInfo(),
+            };
+            return Task.FromResult();*/
             return base.findCellsNearby(request, context);
         }
 

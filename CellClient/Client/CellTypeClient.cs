@@ -44,8 +44,6 @@ namespace CellClient.Client {
 
         private async void Life(float delta) {
             foreach(var cell in cells.Keys) {
-                
-
                 if((cell.divisionCounter += delta) > cell.DivideRate && serverInfo.MaxCellsOfType > cells.Count) {
                     cell.divisionCounter = 0;
                     if (Random.Shared.NextDouble() < 0.3) {

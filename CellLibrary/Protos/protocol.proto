@@ -13,9 +13,8 @@ message UUID {
 }
 
 message LocationRequest {
-	float x = 1;
-	float y = 2;
-	float distance = 3;
+	UUID from = 1;
+	float distance = 2;
 }
 
 message OrganismInfo {
@@ -36,7 +35,9 @@ message CellInfo {
 }
 
 message LocationResponse {
-	repeated CellInfo cells = 1;
+	ActionResult result = 1;
+	CellInfo self = 2;
+	repeated CellInfo cells = 3;
 }
 
 
