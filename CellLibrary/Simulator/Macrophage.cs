@@ -13,10 +13,5 @@ namespace CellLibrary.Simulator {
         public override int Size { get; set; }
         public override float Speed { get; set; }
         public override float DivideRate { get; set; } = 5;
-
-        public Macrophage(IOrganism parent, Vector2 p, float angle) : base(parent, p, angle) {
-            Speed = Random.Shared.NextSingle() * (13.0f - 6f) + 6f;
-            Size = Random.Shared.Next(93, 150);
-        }
     }
 }

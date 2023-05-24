@@ -21,27 +21,8 @@ namespace CellLibrary.Simulator {
         public Guid Id { get; set; } = Guid.NewGuid();
         public float Angle { get; set; } = 0;
 
-        protected readonly IOrganism parent;
-        protected readonly int cellFrameTimeMillis = 1000 / 60;
-        private float divisionCounter = 0;
-
-        public Cell(IOrganism parent) {
-            this.parent = parent;
-        }
-
-        public Cell(IOrganism parent, Vector2 pos, float angle) : this(parent) {
-            Position = pos;
-            Angle = angle;
-        }
-
-        public Cell Divide() {
-            Cell c = (Cell)Activator.CreateInstance(this.GetType(), new object[] { parent, new Vector2(Position.X, Position.Y), Random.Shared.NextSingle() * 2 * (float)Math.PI });
-            return c;
-        }
-
-
-        public bool Equals(Cell x, Cell y) {
-            return x.Id == y.Id;
+        public bool Equals(Cell? x, Cell? y) {
+            return x?.Id == y?.Id;
         }
 
         public int GetHashCode(Cell obj) {

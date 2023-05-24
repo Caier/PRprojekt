@@ -21,13 +21,6 @@ namespace CellLibrary.Simulator {
         public Bacteria Target { get; set; } = null;
         private Vector2 attachedPosition;
 
-        public Antibody(IOrganism parent, Vector2 p, float angle, Bacteria target) : base(parent, p, angle)
-        {
-            Speed = Random.Shared.NextSingle() * (75.0f - 60f) + 60f;
-            Size = Random.Shared.Next(54, 72);
-            Target = target;
-        }
-
     }
       
 }

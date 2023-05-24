@@ -1,11 +1,9 @@
 ﻿syntax = "proto3";
 
-service OrganismService {
-
+service Organism {
 	rpc createCell(CellInfo) returns (ActionResult){}
 	rpc killCell(UUID) returns (ActionResult){}
 	rpc findCellsNearby(LocationRequest) returns (LocationResponse){}
-
 }
 
 message UUID {
@@ -23,7 +21,7 @@ message LocationRequest {
 message CellInfo {
 	UUID id = 1;
 	int32 type = 2;
-	float size = 3;
+	int32 size = 3;
 	float speed = 4;
 	float divideRate = 5;
 	float x = 6;

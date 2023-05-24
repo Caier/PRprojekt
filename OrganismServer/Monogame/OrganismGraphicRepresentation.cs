@@ -1,4 +1,4 @@
-﻿using CellSimulator.Simulator;
+﻿using OrganismServer.Services;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -8,18 +8,18 @@ using Svg;
 using System.IO;
 using CellLibrary.Simulator;
 
-namespace CellSimulator.Monogame {
+namespace OrganismServer.Monogame {
     public class OrganismGraphicRepresentation : Game {
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private Organism organism;
+        private OrganismLogic organism;
         private Dictionary<string, Texture2D> cellTextures = new();
         internal Rectangle viewPort => new(0, 0, 
             (int)(_graphics.GraphicsDevice.DisplayMode.Width * 0.7),
             (int)(_graphics.GraphicsDevice.DisplayMode.Height * 0.7)); //kiedyś może do przesuwanej kamery czy coś
 
-        public OrganismGraphicRepresentation(Organism organism) {
+        public OrganismGraphicRepresentation(OrganismLogic organism) {
             this.organism = organism;
             _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -40,19 +40,20 @@ namespace CellSimulator.Monogame {
         protected override void EndRun() {
             organism.shutdown.Cancel();
             base.EndRun();
+            System.Environment.Exit(0);
         }
 
         protected override void LoadContent() {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            organism.StartLife();
+            
         }
 
         protected override void Update(GameTime gameTime) {
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            organism.Update(gameTime);
+            
 
             base.Update(gameTime);
         }

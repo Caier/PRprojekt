@@ -1,12 +1,12 @@
 ﻿using CellLibrary.Simulator;
-using Microsoft.Xna.Framework;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Numerics;
 
-namespace CellSimulator.Simulator
+namespace OrganismServer.Services
 {
     public enum CellType
     {
@@ -19,7 +19,7 @@ namespace CellSimulator.Simulator
     internal class CellFactory
     {
 
-        public Cell createCellFromCellInfo(Organism parent, CellInfo cellInfo)
+        /*public Cell createCellFromCellInfo(OrganismLogic parent, CellInfo cellInfo)
         {
             CellType type = (CellType)cellInfo.Type;
             float x = cellInfo.X;
@@ -41,7 +41,7 @@ namespace CellSimulator.Simulator
         }
 
         private Cell createCellWithType(CellType cellType, 
-            Organism parent, Vector2 position, float angle)
+            OrganismLogic parent, Vector2 position, float angle)
         {
             switch (cellType)
             {
@@ -55,6 +55,6 @@ namespace CellSimulator.Simulator
                     return new Macrophage(parent, position,angle);
             }
             return null;
-        }
+        }*/
     }
 }

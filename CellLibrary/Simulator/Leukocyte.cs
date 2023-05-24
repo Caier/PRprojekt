@@ -17,12 +17,6 @@ namespace CellLibrary.Simulator {
         public int Range => Size*3; //radius of targeting
 
         public float TimeUntilNextRelease { get; set; } = 0;
-
-        public Leukocyte(IOrganism parent, Vector2 p, float angle) : base(parent, p, angle) {
-            Speed = Random.Shared.NextSingle() * (35.0f - 14f) + 14f;
-            Size = Random.Shared.Next(54, 83);
-        }
-
         
     }
 }
