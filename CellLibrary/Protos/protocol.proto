@@ -1,9 +1,11 @@
 ﻿syntax = "proto3";
+import "google/protobuf/empty.proto";
 
 service Organism {
 	rpc createCell(CellInfo) returns (ActionResult){}
 	rpc killCell(UUID) returns (ActionResult){}
 	rpc findCellsNearby(LocationRequest) returns (LocationResponse){}
+	rpc getOrganismInfo(google.protobuf.Empty) returns (OrganismInfo){}
 }
 
 message UUID {
@@ -16,7 +18,11 @@ message LocationRequest {
 	float distance = 3;
 }
 
-
+message OrganismInfo {
+	int32 width = 1;
+	int32 height = 2;
+	int32 maxCellsOfType = 3;
+}
 
 message CellInfo {
 	UUID id = 1;
@@ -26,8 +32,7 @@ message CellInfo {
 	float divideRate = 5;
 	float x = 6;
 	float y = 7;
-	float divisionCounter = 8;
-	float angle = 9;
+	float angle = 8;
 }
 
 message LocationResponse {

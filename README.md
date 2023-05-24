@@ -10,3 +10,7 @@ przesyłam żeby zachować jakiś progres i żebyście mogli zobaczyć co na raz
 	- w [branchu michała](https://github.com/Caier/PRprojekt/commit/54b8db64dbf36bb452ddc0e9b3fb0a61711a8b98) jest pełniejsza implementacja klienta, i deklaracji protokołu
 
 czy damy radę to zrobić na jutro? wątpięęę
+
+update 14:46:
+- klient nadal wygląda nie za ładnie ale skupiłem się na działaniu jakkolwiek i żeby cokolwiek można było zaprezentować
+- komórki poruszane są tak czy siak przez serwer bo jakoś nie widzi mi się żeby każda komórka robiła 60 rpc na sekundę żeby się poruszać
