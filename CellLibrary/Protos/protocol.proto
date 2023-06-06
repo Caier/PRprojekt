@@ -6,6 +6,8 @@ service Organism {
 	rpc killCell(UUID) returns (ActionOutcome){}
 	rpc findCellsNearby(LocationRequest) returns (LocationResponse){}
 	rpc getOrganismInfo(google.protobuf.Empty) returns (OrganismInfo){}
+	rpc getSpeedVector(UUID) returns (SpeedVector){}
+	rpc updateSpeedVector(SpeedVectorUpdateRequest) returns (ActionOutcome){}
 }
 
 message UUID {
@@ -20,6 +22,17 @@ message CellInfo {
 	float y = 7;
 	float speedX = 9;
 	float speedY = 10;
+}
+
+message SpeedVector {
+	float speedX = 1;
+	float speedY = 2;
+	bool exists = 3;
+}
+
+message SpeedVectorUpdateRequest {
+	UUID id = 1;
+	SpeedVector vector = 2;
 }
 
 enum ActionResult {

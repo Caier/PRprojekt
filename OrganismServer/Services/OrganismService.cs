@@ -7,6 +7,7 @@ using System.Diagnostics;
 using ExCSS;
 using System.Dynamic;
 using Google.Protobuf.WellKnownTypes;
+using CellLibrary.Simulator;
 
 namespace OrganismServer.Services {
     public class OrganismService : Organism.OrganismBase, Cells.IOrganism {
@@ -25,6 +26,28 @@ namespace OrganismServer.Services {
             catch {
                 return Task.FromResult(new ActionOutcome { Result = ActionResult.OtherErr, Message = "Could not add cell" });
             }
+        }
+
+        public override Task<ActionOutcome> updateSpeedVector(SpeedVectorUpdateRequest request, ServerCallContext context)
+        {
+            Guid guid = new Guid(request.Id.Value.Memory.ToArray());
+            Cell? c = logic.cells.Select(a => a.Key)
+                .Where(a => a.Id.Equals(guid))
+                .First();
+            if (c == null)
+            {
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.CellDead });
+            } else
+            {
+                c.Speed = new System.Numerics.Vector2
+                {
+                    X = request.Vector.SpeedX,
+                    Y = request.Vector.SpeedY
+                };
+                // TODO concurrency control
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok});
+            }
+                
         }
 
         public override Task<ActionOutcome> killCell(UUID request, ServerCallContext context) {
@@ -65,5 +88,6 @@ namespace OrganismServer.Services {
                 MaxCellsOfType = logic.maxCells
             });
         }
+
     }
 }
