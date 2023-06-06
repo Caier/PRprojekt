@@ -60,9 +60,9 @@ namespace OrganismServer.Monogame {
 
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.PaleVioletRed);
-            _spriteBatch.Begin();
+            _spriteBatch.Begin(SpriteSortMode.BackToFront, null);
 
-            foreach(var cell in organism.cells.Keys) {
+            foreach(var cell in organism.cells.Values) {
                 if (!cellTextures.ContainsKey(cell.Name))
                     cellTextures.Add(cell.Name, GenerateCellTextureFromSvg(cell));
                 
@@ -70,13 +70,13 @@ namespace OrganismServer.Monogame {
                 float aspect = (float)txt.Width / txt.Height;
                 _spriteBatch.Draw(
                     txt,
-                    new Rectangle((int)cell.Position.X, (int)cell.Position.Y, (int)(cell.Size * aspect), cell.Size),
+                    new Rectangle((int)cell.Position.X, (int)cell.Position.Y, (int)(cell.Size * aspect), (int)cell.Size),
                     null,
                     Color.White,
                     (float)Math.Atan2(cell.Speed.Y, cell.Speed.X) - float.Pi/2,
                     new Vector2(txt.Width / 2f, txt.Height / 2f),
                     SpriteEffects.None,
-                    0
+                    cell.LayerDepth
                 );
             }
 

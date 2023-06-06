@@ -9,6 +9,7 @@ using System.Diagnostics;
 using CellLibrary.Simulator;
 using System.Numerics;
 using Google.Protobuf;
+using System.Runtime.CompilerServices;
 
 namespace CellLibrary.Simulator {
     public enum CellType {
@@ -21,13 +22,16 @@ namespace CellLibrary.Simulator {
     public abstract class Cell : IEqualityComparer<Cell> {
         public abstract string Name { get; }
         public abstract string SVGSprite { get; }
-        public abstract int Size { get; set; }
+        public abstract float Size { get; set; }
         public abstract float DivideRate { get; set; }
         public abstract Vector2 Speed { get; set; }
 
         public Vector2 Position { get; set; } = new(0, 0);
         public bool Dead { get; set; } = false;
+        public bool IsTargeted { get; set; } = false;
         public Guid Id { get; set; } = Guid.NewGuid();
+        public virtual float LayerDepth { get; set; } = 0.5f;
+        public Guid? Target { get; set; } = null;
         public float divisionCounter = 0;
 
         public bool Equals(Cell? x, Cell? y) {
@@ -50,7 +54,10 @@ namespace CellLibrary.Simulator {
             cell.Position = new(info.X, info.Y);
             cell.Speed = new(info.SpeedX, info.SpeedY);
             cell.Size = info.Size;
-            cell.Id = new Guid(info.Id.Value.Memory.ToArray());
+            cell.Id = info.Id.FromMessage();
+            cell.Dead = info.Dead;
+            cell.Target = info.Target?.FromMessage();
+            cell.IsTargeted = info.IsTargeted;
 
             return cell;
         }
@@ -65,13 +72,16 @@ namespace CellLibrary.Simulator {
             };
 
             return new CellInfo {
-                Id = new UUID { Value = ByteString.CopyFrom(Id.ToByteArray()) },
+                Id = Id.ToMessage(),
                 Type = (int)type,
                 Size = Size,
                 SpeedX = Speed[0],
                 SpeedY = Speed[1],
                 X = Position.X,
                 Y = Position.Y,
+                Dead = Dead,
+                Target = Target?.ToMessage(),
+                IsTargeted = IsTargeted
             };
         }
     }
