@@ -73,7 +73,7 @@ namespace OrganismServer.Monogame {
                     new Rectangle((int)cell.Position.X, (int)cell.Position.Y, (int)(cell.Size * aspect), cell.Size),
                     null,
                     Color.White,
-                    cell.Angle,
+                    (float)Math.Atan2(cell.Speed.Y, cell.Speed.X) - float.Pi/2,
                     new Vector2(txt.Width / 2f, txt.Height / 2f),
                     SpriteEffects.None,
                     0

@@ -16,25 +16,25 @@ namespace OrganismServer.Services {
             this.logic = logic;
         }
 
-        public override Task<ActionResult> createCell(CellInfo request, ServerCallContext context) {
+        public override Task<ActionOutcome> createCell(CellInfo request, ServerCallContext context) {
             try {
                 var c = Cells.Cell.FromCellInfo(request);
                 logic.cells.TryAdd(c, null);
-                return Task.FromResult(new ActionResult { Result = 0 });
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
             }
             catch {
-                return Task.FromResult(new ActionResult { Result = -1 });
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.OtherErr, Message = "Could not add cell" });
             }
         }
 
-        public override Task<ActionResult> killCell(UUID request, ServerCallContext context) {
+        public override Task<ActionOutcome> killCell(UUID request, ServerCallContext context) {
             var guid = new Guid(request.Value.Memory.ToArray());
             var c = logic.cells.Keys.Where(c => c.Id == guid).First();
             if(c is not null) {
                 c.Dead = true;
-                return Task.FromResult(new ActionResult { Result = 0 });
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
             }
-            return Task.FromResult(new ActionResult { Result = -1 });
+            return Task.FromResult(new ActionOutcome { Result = ActionResult.OtherErr, Message = "Invalid cell" });
         }
 
         public override Task<LocationResponse> findCellsNearby(LocationRequest request, ServerCallContext context) {

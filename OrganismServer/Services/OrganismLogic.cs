@@ -27,10 +27,10 @@ namespace OrganismServer.Services {
         private void Life(float delta) {
             foreach(var cell in cells.Keys) {
                 if (cell.Position.X > organismDrawer.viewPort.Width || cell.Position.X < 0)
-                    cell.Angle = -cell.Angle;
+                    cell.Speed = new(-cell.Speed.X, cell.Speed.Y);
                 if (cell.Position.Y > organismDrawer.viewPort.Height || cell.Position.Y < 0)
-                    cell.Angle = (float)Math.PI - cell.Angle;
-                cell.Position += new Vector2((float)Math.Sin(cell.Angle) * cell.Speed * delta, (float)-Math.Cos(cell.Angle) * cell.Speed * delta);
+                    cell.Speed = new(cell.Speed.X, -cell.Speed.Y);
+                cell.Position += cell.Speed * delta;
             }
         }
     }

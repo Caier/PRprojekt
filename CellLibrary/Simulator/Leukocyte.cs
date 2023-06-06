@@ -11,7 +11,7 @@ namespace CellLibrary.Simulator {
         public override string Name => "Leukocyt";
         public override string SVGSprite => "<svg viewBox=\"0 0 100 100\" xmlns=\"http://www.w3.org/2000/svg\">\r\n  <defs></defs>\r\n  <circle cx=\"50\" cy=\"50\" r=\"20\" style=\"fill: #ffffff\" /></svg>";
         public override int Size { get; set; } = Random.Shared.Next(54, 83);
-        public override float Speed { get; set; } = Random.Shared.NextSingle() * (35.0f - 14f) + 14f;
+        public override Vector2 Speed { get; set; } = new(Random.Shared.Next(-35, 35), Random.Shared.Next(-35, 35));
         public override float DivideRate { get; set; } = 3.1f;
 
         public int Range => Size*3; //radius of targeting

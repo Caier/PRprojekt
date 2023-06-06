@@ -22,13 +22,12 @@ namespace CellLibrary.Simulator {
         public abstract string Name { get; }
         public abstract string SVGSprite { get; }
         public abstract int Size { get; set; }
-        public abstract float Speed { get; set; }
         public abstract float DivideRate { get; set; }
+        public abstract Vector2 Speed { get; set; }
 
         public Vector2 Position { get; set; } = new(0, 0);
         public bool Dead { get; set; } = false;
         public Guid Id { get; set; } = Guid.NewGuid();
-        public float Angle { get; set; } = 0;
         public float divisionCounter = 0;
 
         public bool Equals(Cell? x, Cell? y) {
@@ -48,9 +47,8 @@ namespace CellLibrary.Simulator {
                 _ => throw new Exception("Invalid cell type")
             };
 
-            cell.Angle = info.Angle;
             cell.Position = new(info.X, info.Y);
-            cell.Speed = info.Speed;
+            cell.Speed = new(info.SpeedX, info.SpeedY);
             cell.Size = info.Size;
             cell.Id = new Guid(info.Id.Value.Memory.ToArray());
 
@@ -70,11 +68,10 @@ namespace CellLibrary.Simulator {
                 Id = new UUID { Value = ByteString.CopyFrom(Id.ToByteArray()) },
                 Type = (int)type,
                 Size = Size,
-                Speed = Speed,
-                DivideRate = DivideRate,
+                SpeedX = Speed[0],
+                SpeedY = Speed[1],
                 X = Position.X,
                 Y = Position.Y,
-                Angle = Angle
             };
         }
     }

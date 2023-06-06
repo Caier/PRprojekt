@@ -33,8 +33,7 @@ namespace CellClient.Client {
 
         public async Task Start() {
             for(int i = 0; i < 2; i++)
-                await RegisterCell(new(Random.Shared.Next(0, serverInfo.Width), Random.Shared.Next(0, serverInfo.Height)),
-                    (float)(Random.Shared.NextSingle() * 2 * Math.PI));
+                await RegisterCell(new(Random.Shared.Next(0, serverInfo.Width), Random.Shared.Next(0, serverInfo.Height)));
 
             while (!shutdown.IsCancellationRequested) {
                 Life(cellFrameTimeMillis / 1000f);
@@ -47,17 +46,16 @@ namespace CellClient.Client {
                 if((cell.divisionCounter += delta) > cell.DivideRate && serverInfo.MaxCellsOfType > cells.Count) {
                     cell.divisionCounter = 0;
                     if (Random.Shared.NextDouble() < 0.3) {
-                        await RegisterCell(new(cell.Position.X, cell.Position.Y), Random.Shared.NextSingle() * 2 * (float)Math.PI);
+                        await RegisterCell(new(cell.Position.X, cell.Position.Y));
                         cell.DivideRate += 0.2f * cell.DivideRate;
                     }
                 }
             }
         }
 
-        private async Task<T> RegisterCell(Vector2 pos, float angle) {
+        private async Task<T> RegisterCell(Vector2 pos) {
             var cell = new T {
                 Position = pos,
-                Angle = angle,
             };
 
             cells.TryAdd(cell, null);
