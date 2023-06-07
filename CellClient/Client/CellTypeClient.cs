@@ -5,16 +5,18 @@ using Grpc.Net.Client;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Net;
 using System.Numerics;
+using System.Reflection.Metadata;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace CellClient.Client {
     internal class CellTypeClient<T> where T: Cell, new() {
         private Organism.OrganismClient organism;
-        private ConcurrentDictionary<Guid, T> cells = new();
+        private ConcurrentDictionary<Guid, Cell> cells = new();
         private readonly OrganismInfo serverInfo;
         static readonly int cellFrameTimeMillis = 1000;
         internal CancellationTokenSource shutdown = new();
@@ -52,10 +54,10 @@ namespace CellClient.Client {
                 if (cellInfo.Outcome.Result != ActionResult.Ok)
                     throw new Exception("Cannot get self info");
 
-                if ((CellType)cellInfo.Info.Type == CellType.MACROPHAGE) {
+                if (cellInfo.Info.Type == CellType.Macrophage) {
                     if (cellInfo.Info.Target is null) {
                         var scan = await organism.findCellsNearbyAsync(new LocationRequest { Distance = 350, From = cellInfo.Info.Id })!;
-                        var target = scan.Cells.Where(c => (CellType)c.Cell.Type == CellType.BACTERIA && !c.Cell.IsTargeted).OrderBy(c => c.Distance);
+                        var target = scan.Cells.Where(c => c.Cell.Type == CellType.Bacteria && !c.Cell.IsTargeted).OrderBy(c => c.Distance);
                         if (target.Count() > 0) {
                             var t = target.First();
                             var res = await organism.setTargetAsync(new TargetRequest { Self = cellInfo.Info.Id, Target = t.Cell.Id })!;
@@ -70,7 +72,32 @@ namespace CellClient.Client {
                             }
                         }
                     }
-                } 
+                } else if(cell is Leukocyte leuk) {
+                    if((leuk.TimeUntilNextRelease -= delta) <= 0) {
+                        var scan = await organism.findCellsNearbyAsync(new LocationRequest { Distance = 200, From = cellInfo.Info.Id })!;
+                        var target = scan.Cells.Where(c => c.Cell.Type == CellType.Bacteria).OrderBy(c => c.Distance);
+                        if(target.Count() > 0) {
+                            var t = target.First();
+                            leuk.TimeUntilNextRelease = 5;
+                            Task[] antibodies = new Task[5];
+
+                            for (int i = 0; i < 5; i++) {
+                                double theta = i * (360.0 / 5);
+                                double x = cellInfo.Info.X + cellInfo.Info.Size * Math.Cos(theta * Math.PI / 180) / 2;
+                                double y = cellInfo.Info.Y + cellInfo.Info.Size * Math.Sin(theta * Math.PI / 180) / 2;
+                                Vector2 position = new((float)x, (float)y);
+
+                                var ant = new Antibody { Position = position, Target = t.Cell.Id.FromMessage() };
+                                antibodies[i] = Task.Run(() => {
+                                    cells.TryAdd(ant.Id, ant);
+                                    organism.createCell(ant.ToCellInfo());
+                                });
+                            }
+
+                            Task.WaitAll(antibodies);
+                        }
+                    }
+                }
 
                 if((cell.divisionCounter += delta) > cell.DivideRate && serverInfo.MaxCellsOfType > cells.Count) {
                     cell.divisionCounter = 0;

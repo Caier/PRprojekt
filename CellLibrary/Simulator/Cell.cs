@@ -12,13 +12,6 @@ using Google.Protobuf;
 using System.Runtime.CompilerServices;
 
 namespace CellLibrary.Simulator {
-    public enum CellType {
-        BACTERIA = 1,
-        LEUKOCYTE = 2,
-        ANTIBODY = 3,
-        MACROPHAGE = 4
-    }
-
     public abstract class Cell : IEqualityComparer<Cell> {
         public abstract string Name { get; }
         public abstract string SVGSprite { get; }
@@ -43,11 +36,11 @@ namespace CellLibrary.Simulator {
         }
 
         public static Cell FromCellInfo(CellInfo info) {
-            Cell cell = (CellType)info.Type switch {
-                CellType.BACTERIA => new Bacteria(),
-                CellType.LEUKOCYTE => new Leukocyte(),
-                CellType.MACROPHAGE => new Macrophage(),
-                CellType.ANTIBODY => new Antibody(),
+            Cell cell = info.Type switch {
+                CellType.Bacteria => new Bacteria(),
+                CellType.Leukocyte => new Leukocyte(),
+                CellType.Macrophage => new Macrophage(),
+                CellType.Antibody => new Antibody(),
                 _ => throw new Exception("Invalid cell type")
             };
 
@@ -64,16 +57,16 @@ namespace CellLibrary.Simulator {
 
         public CellInfo ToCellInfo() {
             var type = this switch {
-                Bacteria => CellType.BACTERIA,
-                Leukocyte => CellType.LEUKOCYTE,
-                Macrophage => CellType.MACROPHAGE,
-                Antibody => CellType.ANTIBODY,
+                Bacteria => CellType.Bacteria,
+                Leukocyte => CellType.Leukocyte,
+                Macrophage => CellType.Macrophage,
+                Antibody => CellType.Antibody,
                 _ => throw new Exception("Invalid cell type")
             };
 
             return new CellInfo {
                 Id = Id.ToMessage(),
-                Type = (int)type,
+                Type = type,
                 Size = Size,
                 SpeedX = Speed[0],
                 SpeedY = Speed[1],

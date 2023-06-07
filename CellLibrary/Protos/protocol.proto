@@ -14,9 +14,16 @@ message UUID {
 	bytes value = 1;
 }
 
+ enum CellType {
+    BACTERIA = 0;
+    LEUKOCYTE = 1;
+    ANTIBODY = 2;
+    MACROPHAGE = 3;
+}
+
 message CellInfo {
 	UUID id = 1;
-	int32 type = 2;
+	CellType type = 2;
 	float size = 3;
 	float x = 6;
 	float y = 7;
