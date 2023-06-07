@@ -59,7 +59,7 @@ namespace OrganismServer.Monogame {
         }
 
         protected override void Draw(GameTime gameTime) {
-            GraphicsDevice.Clear(Color.PaleVioletRed);
+            GraphicsDevice.Clear(organism.background);
             _spriteBatch.Begin(SpriteSortMode.BackToFront, null);
 
             foreach(var cell in organism.cells.Values) {

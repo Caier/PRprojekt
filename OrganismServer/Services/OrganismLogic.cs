@@ -9,7 +9,7 @@ namespace OrganismServer.Services {
         internal OrganismGraphicRepresentation organismDrawer;
         internal CancellationTokenSource shutdown = new();
         internal readonly int maxCells = 50;
-
+        internal Microsoft.Xna.Framework.Color background = new Microsoft.Xna.Framework.Color(255, 0, 100);
         static readonly int cellFrameTimeMillis = 1000 / 60;
 
         public OrganismLogic() {
@@ -25,6 +25,7 @@ namespace OrganismServer.Services {
 
         //common behaviour for all cells in the organism eg. movement
         private void Life(float delta) {
+            int bacteria = 0;
             foreach(var cell in cells.Values) {
                 if(cell.Dead) {
                     if ((cell.Size /= 1.02f) == 0)
@@ -48,6 +49,22 @@ namespace OrganismServer.Services {
                 }
 
                 cell.Position += cell.Speed * delta;
+                if (cell.Name == "Bakteria")
+                {
+                    bacteria++;
+                }
+            }
+
+            background.G = (byte)(255 * 0.1 * bacteria);
+            background.R = (byte)(255 - 150 * 0.1 * bacteria);
+
+            if (background.G >= 140)
+            {
+                background.G = 150;
+            }
+            if (background.R <= 110)
+            {
+                background.R = 100;
             }
         }
     }
