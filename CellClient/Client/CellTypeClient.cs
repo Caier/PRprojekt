@@ -98,8 +98,20 @@ namespace CellClient.Client {
                         }
                     }
                 }
+                else if (cell is Antibody antb)
+                {
+                    var target = await organism.getCellInfoAsync(new GetCellInfoRequest { Self = cellInfo.Info.Id, About = cellInfo.Info.Target })!;
+                    if (target.Info is CellInfo t)
+                    {
+                        if (t.Dead)
+                        {
+                            Task.WaitAll(organism.killCellAsync(cellInfo.Info.Id).ResponseAsync, organism.killCellAsync(cell.Id.ToMessage()).ResponseAsync);
+                            cells.TryRemove(cellInfo.Info.Id.FromMessage(), out var _);
+                        }
+                    }
+                }
 
-                if((cell.divisionCounter += delta) > cell.DivideRate && serverInfo.MaxCellsOfType > cells.Count) {
+                if ((cell.divisionCounter += delta) > cell.DivideRate && serverInfo.MaxCellsOfType > cells.Count) {
                     cell.divisionCounter = 0;
                     if (Random.Shared.NextDouble() < 0.3) {
                         await RegisterCell(new(cellInfo.Info.X, cellInfo.Info.Y));
