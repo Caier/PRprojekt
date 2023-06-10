@@ -55,17 +55,12 @@ namespace OrganismServer.Services {
                 }
             }
 
-            background.G = (byte)(255 * 0.1 * bacteria);
-            background.R = (byte)(255 - 150 * 0.1 * bacteria);
-
-            if (background.G >= 140)
+            if (bacteria > 20)
             {
-                background.G = 150;
+                bacteria = 20;
             }
-            if (background.R <= 110)
-            {
-                background.R = 100;
-            }
+            background.G = (byte)(255 * 0.03 * bacteria);
+            background.R = (byte)(255 - 150 * 0.03 * bacteria);
         }
     }
 }
