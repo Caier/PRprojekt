@@ -1,5 +1,6 @@
 ﻿using CellLibrary;
 using CellLibrary.Simulator;
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
 using System;
@@ -56,8 +57,8 @@ namespace CellClient.Client {
 
                 if (cellInfo.Info.Type == CellType.Macrophage) {
                     if (cellInfo.Info.Target is null) {
-                        var scan = await organism.findCellsNearbyAsync(new LocationRequest { Distance = 350, From = cellInfo.Info.Id })!;
-                        var target = scan.Cells.Where(c => c.Cell.Type == CellType.Bacteria && !c.Cell.IsTargeted).OrderBy(c => c.Distance);
+                        var scan = await organism.findCellsNearbyAsync(new LocationRequest { Distance = 200, From = cellInfo.Info.Id })!;
+                        var target = scan.Cells.Where(c => c.Cell.Type == CellType.Bacteria && !c.Cell.IsTargeted && new Vector2(c.Cell.SpeedX, c.Cell.SpeedY).Length() <= 3).OrderBy(c => c.Distance);
                         if (target.Count() > 0) {
                             var t = target.First();
                             var res = await organism.setTargetAsync(new TargetRequest { Self = cellInfo.Info.Id, Target = t.Cell.Id })!;
@@ -78,7 +79,7 @@ namespace CellClient.Client {
                         var target = scan.Cells.Where(c => c.Cell.Type == CellType.Bacteria).OrderBy(c => c.Distance);
                         if(target.Count() > 0) {
                             var t = target.First();
-                            leuk.TimeUntilNextRelease = 5;
+                            leuk.TimeUntilNextRelease = Random.Shared.Next(15, 25);
                             Task[] antibodies = new Task[5];
 
                             for (int i = 0; i < 5; i++) {
@@ -87,7 +88,9 @@ namespace CellClient.Client {
                                 double y = cellInfo.Info.Y + cellInfo.Info.Size * Math.Sin(theta * Math.PI / 180) / 2;
                                 Vector2 position = new((float)x, (float)y);
 
-                                var ant = new Antibody { Position = position, Target = t.Cell.Id.FromMessage() };
+                                var ant = new Antibody { Position = position, Target = t.Cell.Id.FromMessage(),
+                                    Offset = new(t.Cell.Size / 2 * (float)Math.Cos(theta * Math.PI / 180) / 2, t.Cell.Size / 2 * (float)Math.Sin(theta * Math.PI / 180) / 2) 
+                                };
                                 antibodies[i] = Task.Run(() => {
                                     cells.TryAdd(ant.Id, ant);
                                     organism.createCell(ant.ToCellInfo());
@@ -105,8 +108,13 @@ namespace CellClient.Client {
                     {
                         if (t.Dead)
                         {
-                            Task.WaitAll(organism.killCellAsync(cellInfo.Info.Id).ResponseAsync, organism.killCellAsync(cell.Id.ToMessage()).ResponseAsync);
+                            await organism.killCellAsync(cellInfo.Info.Id);
                             cells.TryRemove(cellInfo.Info.Id.FromMessage(), out var _);
+                        } else {
+                            if(!antb.isUsed && (new Vector2(cellInfo.Info.X, cellInfo.Info.Y) - new Vector2(t.X, t.Y)).Length() <= t.Size) {
+                                await organism.changeSpeedAsync(new ChangeSpeedRequest { Self = t.Id, SpeedX = t.SpeedX * 0.8f, SpeedY = t.SpeedY * 0.8f });
+                                antb.isUsed = true;
+                            }
                         }
                     }
                 }

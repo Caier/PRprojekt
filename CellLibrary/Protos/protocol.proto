@@ -8,6 +8,7 @@ service Organism {
 	rpc getOrganismInfo(google.protobuf.Empty) returns (OrganismInfo){}
 	rpc getCellInfo(GetCellInfoRequest) returns (GetCellInfoResponse){}
 	rpc setTarget(TargetRequest) returns (ActionOutcome){}
+	rpc changeSpeed(ChangeSpeedRequest) returns (ActionOutcome){}
 }
 
 message UUID {
@@ -31,6 +32,8 @@ message CellInfo {
 	float speedY = 10;
 	bool dead = 11;
 	bool isTargeted = 13;
+	float offsetX = 14;
+	float offsetY = 15;
 	optional UUID target = 12;
 }
 
@@ -81,4 +84,10 @@ message GetCellInfoResponse {
 message TargetRequest {
 	UUID self = 1;
 	optional UUID target = 2;
+}
+
+message ChangeSpeedRequest {
+	UUID self = 1;
+	optional float speedX = 3;
+	optional float speedY = 4;
 }

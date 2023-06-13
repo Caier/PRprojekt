@@ -49,7 +49,7 @@ namespace OrganismServer.Services {
                 }
 
                 cell.Position += cell.Speed * delta;
-                if (cell.Name == "Bakteria")
+                if (cell is Bacteria)
                 {
                     bacteria++;
                 }

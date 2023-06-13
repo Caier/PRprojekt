@@ -101,5 +101,15 @@ namespace OrganismServer.Services {
 
             return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
         }
+
+        public override Task<ActionOutcome> changeSpeed(ChangeSpeedRequest request, ServerCallContext context) {
+            logic.cells.TryGetValue(request.Self.FromMessage(), out var self);
+            if (self is null)
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.InvalidCell });
+            if (self.Dead)
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.CellDead });
+            self.Speed = new(request.HasSpeedX ? request.SpeedX : self.Speed.X, request.HasSpeedY ? request.SpeedY : self.Speed.Y);
+            return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
+        }
     }
 }
