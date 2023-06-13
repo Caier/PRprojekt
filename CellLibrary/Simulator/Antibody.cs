@@ -18,6 +18,7 @@ namespace CellLibrary.Simulator {
         public override float DivideRate { get; set; } = float.PositiveInfinity;
 
         public bool isAttached { get; set; } = false;
+        public bool isUsed = false;
         private Vector2 attachedPosition;
     }
       

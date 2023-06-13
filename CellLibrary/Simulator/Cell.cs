@@ -20,6 +20,7 @@ namespace CellLibrary.Simulator {
         public abstract Vector2 Speed { get; set; }
 
         public Vector2 Position { get; set; } = new(0, 0);
+        public Vector2 Offset { get; set; } = new(0, 0);
         public bool Dead { get; set; } = false;
         public bool IsTargeted { get; set; } = false;
         public Guid Id { get; set; } = Guid.NewGuid();
@@ -51,6 +52,7 @@ namespace CellLibrary.Simulator {
             cell.Dead = info.Dead;
             cell.Target = info.Target?.FromMessage();
             cell.IsTargeted = info.IsTargeted;
+            cell.Offset = new(info.OffsetX, info.OffsetY);
 
             return cell;
         }
@@ -74,7 +76,9 @@ namespace CellLibrary.Simulator {
                 Y = Position.Y,
                 Dead = Dead,
                 Target = Target?.ToMessage(),
-                IsTargeted = IsTargeted
+                IsTargeted = IsTargeted,
+                OffsetX = Offset.X,
+                OffsetY = Offset.Y,
             };
         }
     }

@@ -7,7 +7,11 @@ using System.Diagnostics;
 using ExCSS;
 using System.Dynamic;
 using Google.Protobuf.WellKnownTypes;
+<<<<<<< HEAD
 using CellLibrary;
+=======
+using CellLibrary.Simulator;
+>>>>>>> networking2
 
 namespace OrganismServer.Services {
     public class OrganismService : Organism.OrganismBase, Cells.IOrganism {
@@ -26,6 +30,28 @@ namespace OrganismServer.Services {
             catch {
                 return Task.FromResult(new ActionOutcome { Result = ActionResult.OtherErr, Message = "Could not add cell" });
             }
+        }
+
+        public override Task<ActionOutcome> updateSpeedVector(SpeedVectorUpdateRequest request, ServerCallContext context)
+        {
+            Guid guid = new Guid(request.Id.Value.Memory.ToArray());
+            Cell? c = logic.cells.Select(a => a.Key)
+                .Where(a => a.Id.Equals(guid))
+                .First();
+            if (c == null)
+            {
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.CellDead });
+            } else
+            {
+                c.Speed = new System.Numerics.Vector2
+                {
+                    X = request.Vector.SpeedX,
+                    Y = request.Vector.SpeedY
+                };
+                // TODO concurrency control
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok});
+            }
+                
         }
 
         public override Task<ActionOutcome> killCell(UUID request, ServerCallContext context) {
@@ -70,6 +96,7 @@ namespace OrganismServer.Services {
             });
         }
 
+<<<<<<< HEAD
         public override Task<GetCellInfoResponse> getCellInfo(GetCellInfoRequest request, ServerCallContext context) {
             logic.cells.TryGetValue(request.Self.FromMessage(), out var self);
             if(self is null)
@@ -101,5 +128,17 @@ namespace OrganismServer.Services {
 
             return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
         }
+
+        public override Task<ActionOutcome> changeSpeed(ChangeSpeedRequest request, ServerCallContext context) {
+            logic.cells.TryGetValue(request.Self.FromMessage(), out var self);
+            if (self is null)
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.InvalidCell });
+            if (self.Dead)
+                return Task.FromResult(new ActionOutcome { Result = ActionResult.CellDead });
+            self.Speed = new(request.HasSpeedX ? request.SpeedX : self.Speed.X, request.HasSpeedY ? request.SpeedY : self.Speed.Y);
+            return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
+        }
+=======
+>>>>>>> networking2
     }
 }
