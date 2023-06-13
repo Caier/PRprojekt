@@ -1,0 +1,109 @@
+﻿syntax = "proto3";
+import "google/protobuf/empty.proto";
+
+service Organism {
+	rpc createCell(CellInfo) returns (ActionOutcome){}
+	rpc killCell(UUID) returns (ActionOutcome){}
+	rpc findCellsNearby(LocationRequest) returns (LocationResponse){}
+	rpc getOrganismInfo(google.protobuf.Empty) returns (OrganismInfo){}
+<<<<<<< HEAD
+	rpc getCellInfo(GetCellInfoRequest) returns (GetCellInfoResponse){}
+	rpc setTarget(TargetRequest) returns (ActionOutcome){}
+	rpc changeSpeed(ChangeSpeedRequest) returns (ActionOutcome){}
+=======
+	rpc getSpeedVector(UUID) returns (SpeedVector){}
+	rpc updateSpeedVector(SpeedVectorUpdateRequest) returns (ActionOutcome){}
+>>>>>>> networking2
+}
+
+message UUID {
+	bytes value = 1;
+}
+
+ enum CellType {
+    BACTERIA = 0;
+    LEUKOCYTE = 1;
+    ANTIBODY = 2;
+    MACROPHAGE = 3;
+}
+
+message CellInfo {
+	UUID id = 1;
+	CellType type = 2;
+	float size = 3;
+	float x = 6;
+	float y = 7;
+	float speedX = 9;
+	float speedY = 10;
+	bool dead = 11;
+	bool isTargeted = 13;
+	float offsetX = 14;
+	float offsetY = 15;
+	optional UUID target = 12;
+}
+
+message SpeedVector {
+	float speedX = 1;
+	float speedY = 2;
+	bool exists = 3;
+}
+
+message SpeedVectorUpdateRequest {
+	UUID id = 1;
+	SpeedVector vector = 2;
+}
+
+enum ActionResult {
+	OK = 0;
+	CELL_DEAD = 1;
+	INVALID_CELL = 3;
+	OTHER_ERR = 2;
+}
+
+message ActionOutcome {
+	ActionResult result = 1;
+	optional string message = 2;
+}
+
+message LocationRequest {
+	UUID from = 1;
+	float distance = 2;
+}
+
+message OrganismInfo {
+	int32 width = 1;
+	int32 height = 2;
+	int32 maxCellsOfType = 4;
+}
+
+message CellInfoWithDistance {
+	CellInfo cell = 1;
+	float distance = 2;
+}
+
+message LocationResponse {
+	ActionOutcome result = 1;
+	CellInfo self = 2;
+	repeated CellInfoWithDistance cells = 3;
+}
+
+message GetCellInfoRequest {
+	UUID self = 1;
+	UUID about = 2;
+}
+
+message GetCellInfoResponse {
+	ActionOutcome outcome = 1;
+	optional CellInfo info = 2;
+}
+
+message TargetRequest {
+	UUID self = 1;
+	optional UUID target = 2;
+}
+
+message ChangeSpeedRequest {
+	UUID self = 1;
+	optional float speedX = 3;
+	optional float speedY = 4;
+}
