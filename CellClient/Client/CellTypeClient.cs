@@ -58,7 +58,7 @@ namespace CellClient.Client {
                 if (cellInfo.Info.Type == CellType.Macrophage) {
                     if (cellInfo.Info.Target is null) {
                         var scan = await organism.findCellsNearbyAsync(new LocationRequest { Distance = 200, From = cellInfo.Info.Id })!;
-                        var target = scan.Cells.Where(c => c.Cell.Type == CellType.Bacteria && !c.Cell.IsTargeted && new Vector2(c.Cell.SpeedX, c.Cell.SpeedY).Length() <= 3).OrderBy(c => c.Distance);
+                        var target = scan.Cells.Where(c => c.Cell.Type == CellType.Bacteria && !c.Cell.IsTargeted && new Vector2(c.Cell.SpeedX, c.Cell.SpeedY).Length() <= 4.5).OrderBy(c => c.Distance);
                         if (target.Count() > 0) {
                             var t = target.First();
                             var res = await organism.setTargetAsync(new TargetRequest { Self = cellInfo.Info.Id, Target = t.Cell.Id })!;
