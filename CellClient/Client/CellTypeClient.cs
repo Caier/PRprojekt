@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 ﻿using CellLibrary;
 using CellLibrary.Simulator;
+=======
+﻿using CellLibrary.Simulator;
+>>>>>>> networking2
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Net.Client;
@@ -125,8 +129,32 @@ namespace CellClient.Client {
                         await RegisterCell(new(cellInfo.Info.X, cellInfo.Info.Y));
                         cell.DivideRate += 0.2f * cell.DivideRate;
                     }
+                    if(Random.Shared.NextDouble() > 0.5)
+                    {
+                        
+                        await UpdateCellSpeed(cell, 0, 0);
+                    }
                 }
             }
+        }
+
+        private async Task<ActionOutcome> UpdateCellSpeed(T cell, float newX, float newY)
+        {
+          ActionOutcome outcome =
+                await organism.updateSpeedVectorAsync(new SpeedVectorUpdateRequest
+            {
+                Id = new UUID
+                {
+                    Value = ByteString.CopyFrom(cell.Id.ToByteArray())
+                },
+                Vector = new SpeedVector
+                {
+                    Exists = true,
+                    SpeedX = newX,
+                    SpeedY = newY
+                }
+            });
+            return outcome;
         }
 
         private async Task<T> RegisterCell(Vector2 pos) {

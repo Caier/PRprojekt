@@ -3,21 +3,27 @@ using CellLibrary.Simulator;
 using Google.Protobuf;
 using Grpc.Net.Client;
 
-var server = "https://localhost:6543";
+if(args.Length != 2)
+{
+    Console.Error.WriteLine("Usage CellClient {HOSTNAME:PORT} {ORGANISM}");
+    return 1;
+}
 
-new Thread(async () => {
+var server = args[0];
+var organismType = args[1].ToUpper();
+
+if (organismType.Equals("BACTERIA"))
+{
     var bc = new CellTypeClient<Bacteria>(server);
     await bc.Start();
-}).Start();
-
-new Thread(async () => {
+} else if (organismType.Equals("MACROPHAGE"))
+{
     var bc = new CellTypeClient<Macrophage>(server);
     await bc.Start();
-}).Start();
-
-new Thread(async () => {
-    var bc = new CellTypeClient<Leukocyte>(server);
+} else if (organismType.Equals("LEUKOCYTE"))
+{
+    var bc = new CellTypeClient<Leukocyte>(server); 
     await bc.Start();
-}).Start();
+}
 
 while (true) ;

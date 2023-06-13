@@ -6,9 +6,14 @@ service Organism {
 	rpc killCell(UUID) returns (ActionOutcome){}
 	rpc findCellsNearby(LocationRequest) returns (LocationResponse){}
 	rpc getOrganismInfo(google.protobuf.Empty) returns (OrganismInfo){}
+<<<<<<< HEAD
 	rpc getCellInfo(GetCellInfoRequest) returns (GetCellInfoResponse){}
 	rpc setTarget(TargetRequest) returns (ActionOutcome){}
 	rpc changeSpeed(ChangeSpeedRequest) returns (ActionOutcome){}
+=======
+	rpc getSpeedVector(UUID) returns (SpeedVector){}
+	rpc updateSpeedVector(SpeedVectorUpdateRequest) returns (ActionOutcome){}
+>>>>>>> networking2
 }
 
 message UUID {
@@ -35,6 +40,17 @@ message CellInfo {
 	float offsetX = 14;
 	float offsetY = 15;
 	optional UUID target = 12;
+}
+
+message SpeedVector {
+	float speedX = 1;
+	float speedY = 2;
+	bool exists = 3;
+}
+
+message SpeedVectorUpdateRequest {
+	UUID id = 1;
+	SpeedVector vector = 2;
 }
 
 enum ActionResult {
