@@ -2,7 +2,10 @@
   "profiles": {
     "CellClient": {
       "commandName": "Project",
-      "commandLineArgs": "http://localhost:5000 leukocyte"
+      "commandLineArgs": "leukocyte",
+      "environmentVariables": {
+        "SERVER_ADDRESS": "localhost"
+      }
     }
   }
 }
