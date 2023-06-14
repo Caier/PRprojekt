@@ -17,7 +17,7 @@ else if (!int.TryParse(port, out var _)) {
     return 2;
 }
 
-string url = "https://" + server + ":" + port + "/";
+string url = "http://" + server + ":" + port + "/";
 
 if (args.Length < 1) {
     Console.WriteLine("Set command line argument to the name of agent");
