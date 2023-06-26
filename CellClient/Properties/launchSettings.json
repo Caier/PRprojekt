@@ -2,7 +2,7 @@
   "profiles": {
     "CellClient": {
       "commandName": "Project",
-      "commandLineArgs": "leukocyte",
+      "commandLineArgs": "bacteria",
       "environmentVariables": {
         "SERVER_ADDRESS": "localhost"
       }

@@ -31,7 +31,7 @@ namespace OrganismServer.Services {
         public override Task<ActionOutcome> killCell(UUID request, ServerCallContext context) {
             logic.cells.TryGetValue(request.FromMessage(), out var c);
             if(c is not null) {
-                c.Dead = true;
+                lock(c) c.Dead = true;
                 return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
             }
             return Task.FromResult(new ActionOutcome { Result = ActionResult.InvalidCell });
@@ -42,24 +42,28 @@ namespace OrganismServer.Services {
             logic.cells.TryGetValue(request.From.FromMessage(), out var from);
             if (from is null)
                 return Task.FromResult(new LocationResponse { Result = new ActionOutcome { Result = ActionResult.InvalidCell } });
-            if (from.Dead)
-                return Task.FromResult(new LocationResponse { Result = new ActionOutcome { Result = ActionResult.CellDead } });
+            lock (from) {
+                if (from.Dead)
+                    return Task.FromResult(new LocationResponse { Result = new ActionOutcome { Result = ActionResult.CellDead } });
 
-            foreach (var cell in logic.cells.Values) {
-                var dist = (from.Position - cell.Position).Length();
-                if (dist <= request.Distance && cell != from && !cell.Dead) {
-                    cells.Add(new CellInfoWithDistance { Cell = cell.ToCellInfo(), Distance = (float)dist });
+                foreach (var cell in logic.cells.Values) {
+                    lock (cell) {
+                        var dist = (from.Position - cell.Position).Length();
+                        if (dist <= request.Distance && cell != from && !cell.Dead) {
+                            cells.Add(new CellInfoWithDistance { Cell = cell.ToCellInfo(), Distance = (float)dist });
+                        }
+                    }
                 }
+
+                var response = new LocationResponse {
+                    Result = new ActionOutcome { Result = ActionResult.Ok },
+                    Self = from.ToCellInfo(),
+                };
+
+                response.Cells.AddRange(cells);
+
+                return Task.FromResult(response);
             }
-
-            var response = new LocationResponse {
-                Result = new ActionOutcome { Result = ActionResult.Ok },
-                Self = from.ToCellInfo(),
-            };
-
-            response.Cells.AddRange(cells);
-
-            return Task.FromResult(response);
         }
 
         public override Task<OrganismInfo> getOrganismInfo(Empty _, ServerCallContext context) {
@@ -74,29 +78,38 @@ namespace OrganismServer.Services {
             logic.cells.TryGetValue(request.Self.FromMessage(), out var self);
             if(self is null)
                 return Task.FromResult(new GetCellInfoResponse { Outcome = new ActionOutcome { Result = ActionResult.InvalidCell } });
-            if(self.Dead)
-                return Task.FromResult(new GetCellInfoResponse { Outcome = new ActionOutcome { Result = ActionResult.CellDead } });
+
+            lock (self) {
+                if (self.Dead)
+                    return Task.FromResult(new GetCellInfoResponse { Outcome = new ActionOutcome { Result = ActionResult.CellDead } });
+            }
             logic.cells.TryGetValue(request.About.FromMessage(), out var c);
             if (c is null)
                 return Task.FromResult(new GetCellInfoResponse { Outcome = new ActionOutcome { Result = ActionResult.InvalidCell } });
-            return Task.FromResult(new GetCellInfoResponse { Outcome = new ActionOutcome { Result = ActionResult.Ok }, Info = c.ToCellInfo() });
+
+            lock (c) {
+                return Task.FromResult(new GetCellInfoResponse { Outcome = new ActionOutcome { Result = ActionResult.Ok }, Info = c.ToCellInfo() });
+            }
         }
 
         public override Task<ActionOutcome> setTarget(TargetRequest request, ServerCallContext context) {
             logic.cells.TryGetValue(request.Self.FromMessage(), out var self);
             if(self is null)
                 return Task.FromResult(new ActionOutcome { Result = ActionResult.InvalidCell });
-            if(self.Dead)
-                return Task.FromResult(new ActionOutcome { Result = ActionResult.CellDead });
 
-            if (request.Target is null)
-                self.Target = null;
-            else {
-                logic.cells.TryGetValue(request.Target.FromMessage(), out var other);
-                if(other is null)
-                    return Task.FromResult(new ActionOutcome { Result = ActionResult.InvalidCell });
-                self.Target = request.Target.FromMessage();
-                other.IsTargeted = true;
+            lock (self) {
+                if (self.Dead)
+                    return Task.FromResult(new ActionOutcome { Result = ActionResult.CellDead });
+
+                if (request.Target is null)
+                    self.Target = null;
+                else {
+                    logic.cells.TryGetValue(request.Target.FromMessage(), out var other);
+                    if (other is null)
+                        return Task.FromResult(new ActionOutcome { Result = ActionResult.InvalidCell });
+                    self.Target = request.Target.FromMessage();
+                    lock(other) other.IsTargeted = true;
+                }
             }
 
             return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
@@ -106,9 +119,11 @@ namespace OrganismServer.Services {
             logic.cells.TryGetValue(request.Self.FromMessage(), out var self);
             if (self is null)
                 return Task.FromResult(new ActionOutcome { Result = ActionResult.InvalidCell });
-            if (self.Dead)
-                return Task.FromResult(new ActionOutcome { Result = ActionResult.CellDead });
-            self.Speed = new(request.HasSpeedX ? request.SpeedX : self.Speed.X, request.HasSpeedY ? request.SpeedY : self.Speed.Y);
+            lock (self) {
+                if (self.Dead)
+                    return Task.FromResult(new ActionOutcome { Result = ActionResult.CellDead });
+                self.Speed = new(request.HasSpeedX ? request.SpeedX : self.Speed.X, request.HasSpeedY ? request.SpeedY : self.Speed.Y);
+            }
             return Task.FromResult(new ActionOutcome { Result = ActionResult.Ok });
         }
     }
